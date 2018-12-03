@@ -4,7 +4,7 @@ raw = """<paste inputs here>"""
 
 
 def process_claim(claim):
-    """Convert a claim row into an array of points"""
+    """Convert a claim row into a set of points"""
     claim_number, details = [i.strip() for i in claim.split('@')]
     # strip the leading #
     claim_number = int(claim_number[1:])
@@ -20,7 +20,7 @@ def process_claim(claim):
 
 
 def invert_claims(claims):
-    """Convert a dict of {claim_number: claims} to {(x, y): [claim_numbers]}"""
+    """Convert a dict of {claim_number: claims} to {(x, y): {claim_numbers}}"""
     coordinates_claimed = {}
     for claim_number, coordinate_set in claims.items():
         for coordinates in coordinate_set:
