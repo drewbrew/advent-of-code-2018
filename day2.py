@@ -29,9 +29,10 @@ if __name__ == '__main__':
     twos = 0
 
     for i in counts:
-        if any(val == 3 for val in i.values()):
+        values = set(i.values())
+        if 3 in values:
             threes += 1
-        if any(val == 2 for val in i.values()):
+        if 2 in values:
             twos += 1
 
     print('Day 2, part 1 solution:', threes * twos)
