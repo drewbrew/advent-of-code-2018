@@ -2,7 +2,7 @@
 
 import datetime
 
-source = """<pase inputs here>""".split('\n')
+source = """<paste inputs here>""".split('\n')
 
 TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M'
 
@@ -12,9 +12,11 @@ def parse_input(source):
     result = []
     for line in source:
         raw_timestamp, event = [i.strip() for i in line.split(']')]
+        # trim the leading [
         timestamp = datetime.datetime.strptime(
             raw_timestamp[1:], TIMESTAMP_FORMAT)
         result.append((timestamp, event))
+    # and sort by timestamp
     return sorted(result)
 
 
@@ -27,6 +29,7 @@ def parse_awake_asleep(event_list):
     last_state = None
     for timestamp, event in event_list:
         if event.startswith('Guard #'):
+            # Guard #x begins shift
             last_guard = int(event.split(' ')[1][1:])
             continue
         if last_guard is None:
@@ -37,12 +40,14 @@ def parse_awake_asleep(event_list):
         except KeyError:
             guards[last_guard] = {}
             guard_calendar = guards[last_guard]
+        # first, just log the events in order
         try:
             today = guard_calendar[(timestamp.month, timestamp.day)]
         except KeyError:
-            # first, just log the events
             guard_calendar[(timestamp.month, timestamp.day)] = {}
             today = guard_calendar[(timestamp.month, timestamp.day)]
+        # event is either 'wakes up' or 'falls asleep'
+        # just in case of whitespace, use `in` instead of equality
         state = 'wakes up' in event
         today[timestamp.minute] = state
     # now go through and convert them into a list of minutes using booleans
@@ -55,9 +60,19 @@ def parse_awake_asleep(event_list):
             last_state = None
             last_time = None
             today = {}
-            # NOTE: if you're running this on pre-py36, this *WILL* fail
+            # NOTE: if you're running this on python < 3.7[1], this *WILL* fail
+            # because dict insertion order is not preserved
+            # [1] This will work for CPython 3.6 because insertion order
+            # preservation was added as an implementation detail, but other
+            # implementations of Python 3.6 will fail. Guido mandated that
+            # insertion order is preserved in Python 3.7 for all
+            # implementations.
             for minute, event in event_dict.items():
                 if last_state is None:
+                    # assume the state is inverted for the start of the hour
+                    # so if the first event is 'wakes up', then the guard
+                    # was asleep at the start of the shift (and is probably
+                    # named Homer Jay Simpson)
                     last_state = not event
                     last_time = 0
                 # mark everything from the previous timestamp up to the
