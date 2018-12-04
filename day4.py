@@ -95,7 +95,7 @@ def max_asleep_time(guards_awake_asleep):
     for guard, calendar in guards_awake_asleep.items():
         asleep_time[guard] = sum(
             sum(not event for event in event_dict.values())
-            for (month, day), event_dict in calendar.items()
+            for event_dict in calendar.values()
         )
     return sorted(
         ((guard_number, time) for guard_number, time in asleep_time.items()),
@@ -108,7 +108,7 @@ def minute_most_asleep(guards_awake_asleep, guard_number):
     """Calculate on which minute the guard was most often asleep"""
     calendar = guards_awake_asleep[guard_number]
     times_asleep = [0] * 60
-    for dummy, events in calendar.items():
+    for events in calendar.values():
         for minute, event in events.items():
             if not event:
                 times_asleep[minute] += 1
@@ -122,7 +122,7 @@ def guard_most_frequently_asleep_on_same_minute(guards_awake_asleep):
     result = {}
     for guard, calendar in guards_awake_asleep.items():
         guard_minutes = {i: 0 for i in range(60)}
-        for (month, day), event_dict in calendar.items():
+        for event_dict in calendar.values():
             for minute, state in event_dict.items():
                 if not state:
                     guard_minutes[minute] += 1
@@ -149,4 +149,7 @@ if __name__ == '__main__':
     )
     guard_number, (minute_most_often_asleep, times_asleep) = \
         guard_most_frequently_asleep_on_same_minute(parsed)
-    print(f'Day 4, part 2 solution: {guard_number * minute_most_often_asleep}')
+    print(
+        f'Day 4, part 2 solution Guard #{guard_number} was asleep '
+        f'{times_asleep} times at minute {minute_most_often_asleep}: '
+        f'{guard_number * minute_most_often_asleep}')
