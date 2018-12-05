@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b987970e79cd5b393a111473313c6c8ffe7efc02af8b8d67d270661bf7ac8485"
+            "sha256": "62cb07f863be872de065feb65fb8227d5576240f102ac8c9589a177b93917e5b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -17,13 +17,12 @@
     },
     "default": {},
     "develop": {
-        "appnope": {
+        "autopep8": {
             "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
+                "sha256:33d2b5325b7e1afb4240814fe982eea3a92ebea712869bfd08b3c0393404248c"
             ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
+            "index": "pypi",
+            "version": "==1.4.3"
         },
         "backcall": {
             "hashes": [
@@ -97,6 +96,13 @@
                 "sha256:d7cc528d76e76342423ca640335bd3633420dc1366f258cb31d05e865ef5ca1f"
             ],
             "version": "==0.6.0"
+        },
+        "pycodestyle": {
+            "hashes": [
+                "sha256:cbc619d09254895b0d12c2c691e237b2e91e9b2ecf5e84c26b35400f93dcfb83",
+                "sha256:cbfca99bd594a10f674d0cd97a3d802a1fdef635d4361e1a2658de47ed261e3a"
+            ],
+            "version": "==2.4.0"
         },
         "pygments": {
             "hashes": [
