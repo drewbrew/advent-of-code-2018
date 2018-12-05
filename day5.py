@@ -53,7 +53,9 @@ def find_best_removal(polymer_string):
 
 if __name__ == '__main__':
     assert react_polymer('dabAcCaCBAcCcaDA') == react_polymer('dabCBAcaDA')
-    assert find_best_removal('dabAcCaCBAcCcaDA') == ('c', 4), find_best_removal('dabAcCaCBAcCcaDA')
+    assert find_best_removal('dabAcCaCBAcCcaDA') == (
+        'c', 4,
+    ), find_best_removal('dabAcCaCBAcCcaDA')
     fully_reacted = len(react_polymer(inputs))
     print('Day 5, part 1 solution:', fully_reacted)
     best_char, length = find_best_removal(inputs)
