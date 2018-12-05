@@ -11,44 +11,45 @@ def react_polymer(polymer_string):
     adjacent characters are case-insensitive equal but not equal (i.e. A and a)
     with the empty string
     """
-    iterations = 0
-    original_string = polymer_string
-    while True:
-        original_string = polymer_string
-        polymer_string = parse_polymer(polymer_string)
-        iterations += 1
-        if original_string == polymer_string:
+    # convert to a list since strings are immutable
+    polymer_list = [i for i in polymer_string]
+    index = 0
+    while index < len(polymer_string) - 1:
+        char = polymer_list[index]
+        try:
+            next = polymer_list[index + 1]
+        except IndexError:
             break
+        if next.casefold() == char.casefold() and next != char:
+            # remove the char at index twice to get rid of char and next
+            char1 = polymer_list.pop(index)
+            char2 = polymer_list.pop(index)
+            assert char1 == char
+            assert char2 == next
+            index = max([index - 2, 0])
+            continue
+        index += 1
+    # Not technically necessary, but I like to maintain type coherence
+    polymer_string = ''.join(polymer_list)
     return polymer_string
 
 
-def parse_polymer(polymer_string):
-    for index, char in enumerate(polymer_string):
-        try:
-            next = polymer_string[index + 1]
-        except IndexError:
-            # we've reached the end. Nothing can be done.
-            return polymer_string
-        if next.casefold() == char.casefold() and next != char:
-            # strip these two chars
-            polymer_string = polymer_string[:index] + polymer_string[
-                index + 2:]
-            # and return the result
-            return polymer_string
-
-
 def find_best_removal(polymer_string):
-    results = {}
+    best_char = ''
+    best_result = len(polymer_string)
     for char in string.ascii_lowercase:
         if char.casefold() not in polymer_string.casefold():
             print('skipping', char)
-            results[char] = len(polymer_string)
             continue
         shortened = polymer_string.replace(char, '')
         shortened = shortened.replace(char.upper(), '')
-        results[char] = len(react_polymer(shortened))
-        print(f'tested {char}; result {results[char]}')
-    return sorted(results.items(), key=lambda k: k[1])[0]
+        result = len(react_polymer(shortened))
+        print(f'tested {char}; result {result}')
+        if result < best_result:
+            best_char = char
+            best_result = result
+    return best_char, best_result
+
 
 if __name__ == '__main__':
     assert react_polymer('dabAcCaCBAcCcaDA') == react_polymer('dabCBAcaDA')
