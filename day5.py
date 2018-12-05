@@ -17,15 +17,15 @@ def react_polymer(polymer_string):
     while index < len(polymer_string) - 1:
         char = polymer_list[index]
         try:
-            next = polymer_list[index + 1]
+            next_char = polymer_list[index + 1]
         except IndexError:
             break
-        if next.casefold() == char.casefold() and next != char:
-            # remove the char at index twice to get rid of char and next
+        if next_char.casefold() == char.casefold() and next_char != char:
+            # remove the char at index twice to get rid of char and next_char
             char1 = polymer_list.pop(index)
             char2 = polymer_list.pop(index)
             assert char1 == char
-            assert char2 == next
+            assert char2 == next_char
             index = max([index - 2, 0])
             continue
         index += 1
