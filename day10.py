@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from matplotlib import pyplot as plt
+
 test_input = """position=< 9,  1> velocity=< 0,  2>
 position=< 7,  0> velocity=<-1,  0>
 position=< 3, -2> velocity=<-1,  1>
@@ -47,7 +49,6 @@ real_data = []
 for line in real_input:
     pos_str, vel_str = line.split('> ')
     pos_str = pos_str.split('<')[1]
-    print(pos_str, '\n', vel_str)
     str_x, str_y = pos_str.split(', ')
     pos_x = int(str_x.strip())
     pos_y = int(str_y.strip())
@@ -89,7 +90,7 @@ def print_points(vector_list):
         print(''.join(line))
 
 
-def guess_at_message(vector_list):
+def guess_at_message(vector_list, plot=False):
     last_convergence = convergence(vector_list)
     last_points = []
     iterations_increasing = 0
@@ -111,14 +112,32 @@ def guess_at_message(vector_list):
                 f'Possible Day 10, Part 1 solution found after '
                 f'{count - iterations_increasing} iterations:')
             print_points(last_points)
+            if plot:
+                print(
+                    f'Saving to iteration{count - iterations_increasing}.png')
+                plot_points(last_points, count - iterations_increasing)
             break
     return count - iterations_increasing
 
 
+def plot_points(vector_list, iteration=None):
+    figure, axes = plt.subplots()
+    # need to invert y to reflect that +y is down on the console but
+    # up in the plot
+    axes.scatter([i[0] for i in vector_list], [-i[1] for i in vector_list])
+    axes.set_xlabel('x')
+    axes.set_ylabel('y')
+    if iteration is not None:
+        axes.set_title(f'Iteration #{iteration}')
+    axes.grid(True)
+    axes.set_aspect('equal', 'datalim')
+    plt.savefig(f'iteration{iteration}.png' if iteration else 'plot.png')
+
+
 if __name__ == '__main__':
     print('running tests')
-    test_result = guess_at_message(test_data)
+    test_result = guess_at_message(test_data, True)
     assert test_result == 3
     print('tests passed')
-    real_result = guess_at_message(real_data)
-    print('Day 10, part 2 solution:' real_result)
+    real_result = guess_at_message(real_data, True)
+    print('Day 10, part 2 solution:', real_result)
