@@ -10,7 +10,9 @@ fastest or best solutions, but they work.
 
 ## How do I run them?
 
-Unless otherwise noted, download and install Python 3.7.
+Download and install pipenv and Python 3.7.
+
+Install dependencies (currently only needed for day 10): `pipenv install`.
 
 Edit the file to paste the inputs where you see `<paste inputs here>`,
-then run `python3.7 dayX.py`.
+then run `pipenv run python dayX.py`.
