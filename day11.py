@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+from functools import partial
+import numpy
 # replace with your number
 SERIAL_NUMBER = 0
 
@@ -18,7 +19,7 @@ PART_TWO_POWERS = {
 }
 
 
-def power_level(x, y, serial_number):
+def power_level(x, y, serial_number, increment=False):
     """Find the fuel cell's rack ID, which is its X coordinate plus 10.
     Begin with a power level of the rack ID times the Y coordinate.
     Increase the power level by the value of the grid serial number
@@ -27,6 +28,11 @@ def power_level(x, y, serial_number):
     Keep only the hundreds digit of the power level
         (so 12345 becomes 3; numbers with no hundreds digit become 0).
     Subtract 5 from the power level."""
+    if increment:
+        # for zero-based numbering (such as with numpy), we need to increase
+        # both coordinates by 1 to get the right result
+        x += 1
+        y += 1
     rack_id = x + 10
     power_level = rack_id * y
     power_level += serial_number
@@ -40,31 +46,23 @@ def power_level(x, y, serial_number):
 
 
 def populate_grid(serial_number, max_x=300, max_y=300):
-    grid = {}
-    for y in range(1, max_y + 1):
-        for x in range(1, max_x + 1):
-            grid[(x, y)] = power_level(x, y, serial_number) if x and y else 0
+    vector_power_level = numpy.vectorize(
+        partial(power_level, serial_number=serial_number, increment=True)
+    )
+    grid = numpy.fromfunction(vector_power_level, (max_x, max_y))
     return grid
 
 
 def max_power_area(grid, size=3):
-    areas = {}
-    max_coords = max(grid)
-    for x in range(max_coords[0]):
-        for y in range(max_coords[1]):
-            if x == 0:
-                continue
-            if y == 0:
-                continue
-            area_power = sum(
-                grid.get((test_x, test_y), 0)
-                for test_x in range(x, x + size)
-                for test_y in range(y, y + size)
-            )
-            areas[(x, y)] = area_power
-    coords, power = list(
-        sorted(areas.items(), key=lambda k: k[1], reverse=True))[0]
-    return coords, power
+    areas = sum(
+        # the or None is there so we can catch the last column/row cleanly
+        grid[x: x - size + 1 or None, y: y - size + 1 or None]
+        for x in range(size)
+        for y in range(size)
+    )
+    biggest = int(areas.max())
+    location = numpy.where(areas == biggest)
+    return (location[0][0] + 1, location[1][0] + 1), biggest
 
 
 if __name__ == '__main__':
